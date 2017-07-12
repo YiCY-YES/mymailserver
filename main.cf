@@ -1,0 +1,41 @@
+    myhostname = cloud.jhausse.net
+    myorigin = /etc/mailname
+    mydestination = localhost.localdomain, localhost
+    mynetworks_style = host
+    # We disable relaying in the general case
+    smtpd_recipient_restrictions = permit_mynetworks, reject_unauth_destination
+    # Requirements on servers that contact us: we verify the client is not a
+    # known spammer (reject_rbl_client) and use a graylist mechanism
+    # (postgrey) to help reducing spam (check_policy_service)
+    smtpd_client_restrictions = permit_mynetworks, reject_rbl_client zen.spamhaus.org, check_policy_service inet:127.0.0.1:10023
+    disable_vrfy_command = yes
+    inet_interfaces = all
+    smtpd_banner = $myhostname ESMTP $mail_name (Debian/GNU)
+    biff = no
+    append_dot_mydomain = no
+    readme_directory = no
+    # TLS parameters
+    smtpd_tls_cert_file=/etc/ssl/certs/cloud.crt
+    smtpd_tls_key_file=/etc/ssl/private/cloud.key
+    smtpd_use_tls=yes
+    smtpd_tls_auth_only = yes
+    smtp_tls_security_level=may
+    smtp_tls_loglevel = 1
+    smtpd_tls_loglevel = 1
+    smtpd_tls_received_header = yes
+    smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+    smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+    # Delivery
+    alias_maps = hash:/etc/aliases
+    alias_database = hash:/etc/aliases
+    message_size_limit = 50000000
+    recipient_delimiter = +
+    # The next lines are useful to set up a backup MX for myfriendsdomain.org
+    # relay_domains = myfriendsdomain.org
+    # relay_recipient_maps =
+    # Virtual domains
+    virtual_transport = lmtp:unix:private/dovecot-lmtp
+    virtual_mailbox_domains = mysql:/etc/postfix/mysql-virtual-mailbox-domains.cf
+    virtual_mailbox_maps = mysql:/etc/postfix/mysql-virtual-mailbox-maps.cf
+    virtual_alias_maps = mysql:/etc/postfix/mysql-virtual-alias-maps.cf
+    local_recipient_maps = $virtual_mailbox_maps

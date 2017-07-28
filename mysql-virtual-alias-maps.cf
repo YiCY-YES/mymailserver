@@ -1,0 +1,5 @@
+    user = mailuser
+    password = mailuserpass
+    hosts = 127.0.0.1
+    dbname = mailserver
+    query = SELECT virtual_aliases.destination as destination FROM virtual_aliases, virtual_domains WHERE virtual_aliases.source='%u' AND virtual_aliases.domain_id = virtual_domains.id AND virtual_domains.name='%d'
